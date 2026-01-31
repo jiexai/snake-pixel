@@ -329,6 +329,7 @@
   // Overlay 按钮
   ui.btnResume.addEventListener('click', () => {
     if (over) return;
+    started = true;
     paused = false;
     hideOverlay();
   });
@@ -336,18 +337,18 @@
 
   // 触摸滑动控制
   let touchStart = null;
-  canvas.addEventListener('touchstart', (e) => {
+  function onTouchStart(e) {
     if (!e.touches?.length) return;
     const t = e.touches[0];
     touchStart = { x: t.clientX, y: t.clientY, ts: performance.now() };
-  }, { passive: true });
+  }
 
-  canvas.addEventListener('touchmove', (e) => {
+  function onTouchMove(e) {
     // 防止页面滚动干扰
     e.preventDefault();
-  }, { passive: false });
+  }
 
-  canvas.addEventListener('touchend', (e) => {
+  function onTouchEnd(e) {
     if (!touchStart) return;
     const t = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
     if (!t) { touchStart = null; return; }
@@ -358,9 +359,15 @@
     const absX = Math.abs(dx);
     const absY = Math.abs(dy);
 
-    // 轻触：当作暂停/继续
+    // 轻触：开始 / 暂停切换
     if (absX < 14 && absY < 14) {
-      togglePause();
+      if (!started && !over) {
+        started = true;
+        paused = false;
+        hideOverlay();
+      } else {
+        togglePause();
+      }
       touchStart = null;
       return;
     }
@@ -372,7 +379,17 @@
     }
 
     touchStart = null;
-  }, { passive: true });
+  }
+
+  canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+
+  canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+  canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+
+  // 保险：如果遮罩在最上层（某些浏览器渲染/事件差异），也在 overlay 上挂同样的触摸
+  ui.overlay.addEventListener('touchstart', onTouchStart, { passive: true });
+  ui.overlay.addEventListener('touchmove', onTouchMove, { passive: false });
+  ui.overlay.addEventListener('touchend', onTouchEnd, { passive: true });
 
   // 启动
   reset();

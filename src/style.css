@@ -73,6 +73,12 @@ body{
   border-radius: 10px;
   background: rgba(5, 8, 12, .62);
   backdrop-filter: blur(3px);
+  /* 让开始时的滑动/按键能作用到画布：遮罩本身不吃事件，卡片区域仍可点击 */
+  pointer-events: none;
+}
+
+.overlay-card{
+  pointer-events: auto;
 }
 
 .overlay-card{
