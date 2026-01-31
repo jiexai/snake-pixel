@@ -1,0 +1,9 @@
+{
+  "name": "snake-pixel",
+  "private": true,
+  "version": "0.1.0",
+  "description": "像素贪吃蛇 - 纯前端小项目",
+  "scripts": {
+    "dev": "python3 -m http.server 5173"
+  }
+}
