@@ -83,6 +83,7 @@
   let running = true;
   let paused = false;
   let over = false;
+  let started = false; // 首次开始前先停住，避免自动撞墙
 
   let score = 0;
   let tickMsBase = 140; // 初始速度（越小越快）
@@ -99,7 +100,8 @@
 
   function reset() {
     over = false;
-    paused = false;
+    paused = true;
+    started = false;
     running = true;
 
     score = 0;
@@ -119,7 +121,7 @@
     nextDir = { x: 1, y: 0 };
 
     food = spawnFood();
-    hideOverlay();
+    showOverlay('开始游戏', '按任意方向键或滑动开始 · 空格暂停');
   }
 
   function updateHUD() {
@@ -142,6 +144,13 @@
   }
 
   function setDir(dx, dy) {
+    // 首次开始：任意方向输入即开始
+    if (!started && !over) {
+      started = true;
+      paused = false;
+      hideOverlay();
+    }
+
     // 禁止 180° 掉头
     if (dx === -dir.x && dy === -dir.y) return;
     nextDir = { x: dx, y: dy };
@@ -368,7 +377,4 @@
   // 启动
   reset();
   requestAnimationFrame(loop);
-
-  // 初次提示
-  showOverlay('开始游戏', '按任意方向键或滑动开始 · 空格暂停');
 })();
