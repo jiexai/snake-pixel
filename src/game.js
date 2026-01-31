@@ -57,10 +57,13 @@
   function showOverlay(title, hint) {
     wrapText(title, hint);
     ui.overlay.hidden = false;
+    // 某些 WebView/浏览器对 hidden + 自定义 display 处理不一致，直接强制显示/隐藏更稳
+    ui.overlay.style.display = 'flex';
   }
 
   function hideOverlay() {
     ui.overlay.hidden = true;
+    ui.overlay.style.display = 'none';
   }
 
   function loadBest() {
