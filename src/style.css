@@ -77,6 +77,11 @@ body{
   pointer-events: none;
 }
 
+/* 重要：作者样式会覆盖浏览器默认的 [hidden]{display:none}，所以要显式处理 */
+.overlay[hidden]{
+  display: none !important;
+}
+
 .overlay-card{
   pointer-events: auto;
 }
